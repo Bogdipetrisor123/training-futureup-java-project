@@ -8,6 +8,7 @@ import ro.zynk.futureup.controllers.responses.BaseResponse;
 import ro.zynk.futureup.controllers.responses.CoinResponse;
 import ro.zynk.futureup.controllers.responses.ErrorResponse;
 import ro.zynk.futureup.exceptions.DuplicateEntityException;
+import ro.zynk.futureup.exceptions.NotFoundException;
 import ro.zynk.futureup.services.CoinService;
 
 import java.util.List;
@@ -35,4 +36,5 @@ public class CoinController {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
+
 }

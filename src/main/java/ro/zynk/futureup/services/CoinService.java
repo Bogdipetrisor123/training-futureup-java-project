@@ -41,4 +41,5 @@ public class CoinService {
         coinEntity = coinRepository.save(coinEntity);
         return new CoinResponse(coinEntity);
     }
+
 }

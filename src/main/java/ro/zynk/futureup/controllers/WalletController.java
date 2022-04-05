@@ -8,6 +8,7 @@ import ro.zynk.futureup.controllers.requests.CoinExchangeRequest;
 import ro.zynk.futureup.controllers.requests.CoinTransactionRequest;
 import ro.zynk.futureup.controllers.responses.BaseResponse;
 import ro.zynk.futureup.controllers.responses.ErrorResponse;
+import ro.zynk.futureup.controllers.responses.TransactionResponse;
 import ro.zynk.futureup.controllers.responses.WalletResponse;
 import ro.zynk.futureup.exceptions.NotFoundException;
 import ro.zynk.futureup.services.WalletService;
@@ -17,6 +18,7 @@ import ro.zynk.futureup.services.WalletService;
 @RequestMapping("/wallets")
 public class WalletController {
     private final WalletService walletService;
+
 
     @Autowired
     public WalletController(WalletService walletService) {
@@ -50,7 +52,12 @@ public class WalletController {
     @PutMapping(value = "/buy_coin")
     public ResponseEntity<BaseResponse> buyCoin(@RequestBody CoinTransactionRequest buyCoinRequest) {
         try {
-            return new ResponseEntity<>(walletService.buyCoin(buyCoinRequest), HttpStatus.OK);
+            ResponseEntity<BaseResponse> responseEntity = new ResponseEntity<>(walletService.buyCoin(buyCoinRequest), HttpStatus.OK);
+            TransactionResponse transactionResponse = new TransactionResponse();
+            transactionResponse.setCoinId(buyCoinRequest.getCoinId());
+            transactionResponse.setAmount(buyCoinRequest.getAmount());
+            walletService.saveNewTransaction(transactionResponse);
+            return responseEntity;
         } catch (NotFoundException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -74,4 +81,15 @@ public class WalletController {
         }
 
     }
+
+    @GetMapping(value = "/value")
+    public ResponseEntity<BaseResponse> getWalletTotalValue(@RequestParam Long walletId) {
+        try {
+            return new ResponseEntity<>(walletService.getWalletTotalValue(walletId), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 }
